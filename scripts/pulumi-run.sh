@@ -8,15 +8,17 @@ set -o nounset
 # Default region.
 export AWS_REGION="eu-west-1"
 
-# Make sure Pulumi state bucket exists within current AWS account.
+# Use precreated bucket for state.
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 STATE_BUCKET_NAME=pulumi-state-${AWS_ACCOUNT_ID}
-aws s3 mb --region ${AWS_REGION} s3://${STATE_BUCKET_NAME} 2>/dev/null || true
+
+# USe precreated KMS key for secrets encryption.
+SECRETS_PROVIDER="awskms://alias/pulumi-secrets?region=${AWS_REGION}"
+
+# Silence Pulumi with empty passphrase (actually using KMS).
+export PULUMI_CONFIG_PASSPHRASE=""
 
 PROJECT_NAME=$(basename ${PROJECT_DIR})
-
-# Use empty passphrase for now. Try KMS?
-export PULUMI_CONFIG_PASSPHRASE=""
 
 # Scope Pulumi to project dir.
 mkdir -p ${PROJECT_DIR}
@@ -31,15 +33,21 @@ function do_new {
 		--description="${PROJECT_NAME}"
 
 	# Create configs for default environments.
-	declare -a STACK_NAMES=(
+	declare -a DEFAULT_STACK_NAMES=(
+		dev
 		stage
 		prod
 	)
-	for STACK_NAME in "${STACK_NAMES[@]}"; do
+	for STACK_NAME in "${DEFAULT_STACK_NAMES[@]}"; do
+		LOCAL_STATE_FILE=/tmp/${PROJECT_NAME}/${STACK_NAME}
+		mkdir -p ${LOCAL_STATE_FILE}
 		pulumi login \
-			s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+			file://${LOCAL_STATE_FILE}
+
 		pulumi stack init \
+			--secrets-provider="${SECRETS_PROVIDER}" \
 			--stack=${STACK_NAME}
+
 		pulumi config \
 			--stack=${STACK_NAME} \
 			set aws:region ${AWS_REGION}
@@ -50,6 +58,8 @@ function do_up {
 	pulumi login \
 		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
 	pulumi up \
+		--diff \
+		--secrets-provider="${SECRETS_PROVIDER}" \
 		--stack="${STACK_NAME}"
 }
 
@@ -60,12 +70,30 @@ function do_destroy {
 		--stack="${STACK_NAME}"
 }
 
+function do_shell {
+	pulumi login \
+		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+	bash
+}
+
+function require_stack_name {
+	if [[ "${STACK_NAME}" == "" ]]; then
+		echo "STACK_NAME is required"
+		exit 1
+	fi
+}
+
 if [[ "${ACTION}" == "new" ]]; then
 	do_new
 elif [[ "${ACTION}" == "up" ]]; then
+	require_stack_name
 	do_up
 elif [[ "${ACTION}" == "destroy" ]]; then
+	require_stack_name
 	do_destroy
+elif [[ "${ACTION}" == "shell" ]]; then
+	require_stack_name
+	do_shell
 else
 	echo "Unknown action: '${ACTION}'"
 	exit 1

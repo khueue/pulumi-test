@@ -10,11 +10,16 @@ export ACTION=$2
 export STACK_NAME=$3
 
 if [[ "${PROJECT_DIR}" == "" || "${ACTION}" == "" ]]; then
+	if [[ "${PROJECT_DIR}" == "" ]]; then
+		PROJECT_DIR=projects/my-project
+	fi
 	echo "Usage:"
-	echo "bin/pulumi projects/my-project new"
-	echo "bin/pulumi projects/my-project up stage"
-	echo "bin/pulumi projects/my-project destroy stage"
+	echo "bin/pulumi ${PROJECT_DIR} new"
+	echo "bin/pulumi ${PROJECT_DIR} up stage"
+	echo "bin/pulumi ${PROJECT_DIR} destroy stage"
+	echo "bin/pulumi ${PROJECT_DIR} shell stage"
 	exit 1
 fi
 
+echo "--- Running Pulumi in Docker ..."
 make pulumi

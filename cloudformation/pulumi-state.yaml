@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+
+  StateBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'pulumi-state-${AWS::AccountId}'
+      AccessControl: Private
+
+  SecretsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: For secrets in Pulumi configs
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+        - Sid: FullAccessRootAndAdmin
+          Effect: Allow
+          Principal:
+            AWS:
+            - !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            - !Sub 'arn:aws:iam::${AWS::AccountId}:role/Admin'
+          Action:
+          - kms:*
+          Resource:
+          - '*'
+
+  SecretsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: alias/pulumi-secrets
+      TargetKeyId:
+        Ref: SecretsKey
