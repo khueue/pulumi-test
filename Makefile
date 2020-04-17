@@ -14,8 +14,8 @@ pulumi:
 
 	docker run --interactive --tty --rm \
 		--mount type="bind",source="$(PWD)",target="/go/repo",consistency="delegated" \
-		--mount type="bind",source="$(PWD)/lib",target="/usr/local/go/src/lib",consistency="delegated" \
-		--mount type="bind",source="$(PWD)/scripts",target="/_scripts",consistency="delegated" \
+		--mount type="bind",source="$(PWD)/lib",target="/usr/local/go/src/lib",consistency="delegated",readonly \
+		--mount type="bind",source="$(PWD)/scripts",target="/_scripts",consistency="delegated",readonly \
 		--mount type="bind",source="$(PWD)/_tmp/cache",target="/go/cache",consistency="delegated" \
 		--mount type="bind",source="$(PWD)/_tmp/pkg",target="/go/pkg",consistency="delegated" \
 		--mount type="bind",source="$(PWD)/_tmp/pulumi",target="/root/.pulumi",consistency="delegated" \
