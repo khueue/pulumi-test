@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -o errexit
+set -o pipefail
+# set -o nounset
+# set -o xtrace
+
+export PROJECT_DIR=$1
+export ACTION=$2
+export STACK_NAME=$3
+
+if [[ "${PROJECT_DIR}" == "" || "${ACTION}" == "" ]]; then
+	echo "Usage:"
+	echo "bin/pulumi projects/my-project new"
+	echo "bin/pulumi projects/my-project up stage"
+	echo "bin/pulumi projects/my-project destroy stage"
+	exit 1
+fi
+
+make pulumi

@@ -1,0 +1,4 @@
+encryptionsalt: v1:F3/Su0Xx15g=:v1:aQh7CFzCSsGreILS:x9TGHLxvqLDKq0oJmX8L60QwomZ4rg==
+config:
+  aws:region: eu-west-1
+  base-project:bucket_name: mybasebucket
