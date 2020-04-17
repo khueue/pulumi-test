@@ -5,6 +5,10 @@ set -o pipefail
 set -o nounset
 # set -o xtrace
 
+# Scope Pulumi to project dir.
+mkdir -p ${PROJECT_DIR}
+cd ${PROJECT_DIR}
+
 # Default region.
 export AWS_REGION="eu-west-1"
 
@@ -20,25 +24,17 @@ export PULUMI_CONFIG_PASSPHRASE=""
 
 PROJECT_NAME=$(basename ${PROJECT_DIR})
 
-# Scope Pulumi to project dir.
-mkdir -p ${PROJECT_DIR}
-cd ${PROJECT_DIR}
+declare -a DEFAULT_STACK_NAMES=(
+	dev
+	stage
+	prod
+)
 
-function do_new {
-	# Create project scaffold.
-	pulumi new aws-go \
-		--generate-only \
-		--non-interactive \
-		--name="${PROJECT_NAME}" \
-		--description="${PROJECT_NAME}"
-
-	# Create configs for default environments.
-	declare -a DEFAULT_STACK_NAMES=(
-		dev
-		stage
-		prod
-	)
+function base_do_stack_inits {
 	for STACK_NAME in "${DEFAULT_STACK_NAMES[@]}"; do
+		echo
+		echo "--- Creating config for ${STACK_NAME} ..."
+
 		LOCAL_STATE_FILE=/tmp/${PROJECT_NAME}/${STACK_NAME}
 		mkdir -p ${LOCAL_STATE_FILE}
 		pulumi login \
@@ -54,47 +50,46 @@ function do_new {
 	done
 }
 
-function do_up {
+function base_do_up {
+	echo
+	echo "--- Connecting to remote state ..."
 	pulumi login \
 		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+
+	echo
+	echo "--- Provisioning stack ..."
 	pulumi up \
 		--diff \
 		--secrets-provider="${SECRETS_PROVIDER}" \
 		--stack="${STACK_NAME}"
 }
 
-function do_destroy {
+function base_do_destroy {
+	echo
+	echo "--- Connecting to remote state ..."
 	pulumi login \
 		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+
+	echo
+	echo "--- Destroying stack ..."
 	pulumi destroy \
 		--stack="${STACK_NAME}"
 }
 
-function do_shell {
+function base_do_shell {
+	echo
+	echo "--- Connecting to remote state ..."
 	pulumi login \
 		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+
+	echo
+	echo "--- Running shell ..."
 	bash
 }
 
-function require_stack_name {
+function base_require_stack_name {
 	if [[ "${STACK_NAME}" == "" ]]; then
 		echo "STACK_NAME is required"
 		exit 1
 	fi
 }
-
-if [[ "${ACTION}" == "new" ]]; then
-	do_new
-elif [[ "${ACTION}" == "up" ]]; then
-	require_stack_name
-	do_up
-elif [[ "${ACTION}" == "destroy" ]]; then
-	require_stack_name
-	do_destroy
-elif [[ "${ACTION}" == "shell" ]]; then
-	require_stack_name
-	do_shell
-else
-	echo "Unknown action: '${ACTION}'"
-	exit 1
-fi

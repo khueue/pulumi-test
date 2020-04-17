@@ -14,12 +14,12 @@ if [[ "${PROJECT_DIR}" == "" || "${ACTION}" == "" ]]; then
 		PROJECT_DIR=projects/my-project
 	fi
 	echo "Usage:"
-	echo "bin/pulumi ${PROJECT_DIR} new"
-	echo "bin/pulumi ${PROJECT_DIR} up stage"
-	echo "bin/pulumi ${PROJECT_DIR} destroy stage"
-	echo "bin/pulumi ${PROJECT_DIR} shell stage"
+	echo "bin/pulumi-ts ${PROJECT_DIR} new"
+	echo "bin/pulumi-ts ${PROJECT_DIR} up stage"
+	echo "bin/pulumi-ts ${PROJECT_DIR} destroy stage"
+	echo "bin/pulumi-ts ${PROJECT_DIR} shell stage"
 	exit 1
 fi
 
-echo "--- Running Pulumi in Docker ..."
-make pulumi
+echo "--- Running Pulumi (TypeScript) in Docker ..."
+make pulumi runner_script=./bin/lib/pulumi-ts.sh
