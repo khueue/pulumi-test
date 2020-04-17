@@ -11,7 +11,7 @@ Requirements and gotchas:
 -  Docker.
 -  Assumes AWS credentials will be gotten from the environment
    (e.g. https://github.com/otm/limes).
--  Assumes that a role called `Admin` exits in the current AWS account.
+-  Assumes that a role called `Admin` exists in the current AWS account.
 -  Assumes that you have enough AWS privileges to provision lots of stuff.
 -  Defaults to AWS region `eu-west-1`.
 
