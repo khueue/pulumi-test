@@ -51,24 +51,19 @@ function base_do_stack_inits {
 }
 
 function base_do_up {
-	echo
-	echo "--- Connecting to remote state ..."
-	pulumi login \
-		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+	base_use_remote_state
 
 	echo
-	echo "--- Provisioning stack ..."
+	echo "--- Provisioning stack '${STACK_NAME}' ..."
 	pulumi up \
+		--refresh \
 		--diff \
 		--secrets-provider="${SECRETS_PROVIDER}" \
 		--stack="${STACK_NAME}"
 }
 
 function base_do_destroy {
-	echo
-	echo "--- Connecting to remote state ..."
-	pulumi login \
-		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+	base_use_remote_state
 
 	echo
 	echo "--- Destroying stack ..."
@@ -77,14 +72,18 @@ function base_do_destroy {
 }
 
 function base_do_shell {
-	echo
-	echo "--- Connecting to remote state ..."
-	pulumi login \
-		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+	base_use_remote_state
 
 	echo
 	echo "--- Running shell ..."
 	bash
+}
+
+function base_use_remote_state {
+	echo
+	echo "--- Connecting to remote state ..."
+	pulumi login \
+		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
 }
 
 function base_require_stack_name {
