@@ -5,6 +5,10 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub 'pulumi-state-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - ServerSideEncryptionByDefault:
+            SSEAlgorithm: AES256
       AccessControl: Private
 
   SecretsKey:
