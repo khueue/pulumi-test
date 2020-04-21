@@ -27,14 +27,11 @@ if [[ "${ACTION}" == "new" ]]; then
 	do_new
 	base_do_stack_inits
 elif [[ "${ACTION}" == "up" ]]; then
-	base_require_stack_name
 	do_dependencies
 	base_do_up
 elif [[ "${ACTION}" == "destroy" ]]; then
-	base_require_stack_name
 	base_do_destroy
 elif [[ "${ACTION}" == "shell" ]]; then
-	base_require_stack_name
 	base_do_shell
 else
 	echo "Unknown action: '${ACTION}'"

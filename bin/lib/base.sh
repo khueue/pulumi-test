@@ -85,10 +85,3 @@ function base_use_remote_state {
 	pulumi login \
 		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
 }
-
-function base_require_stack_name {
-	if [[ "${STACK_NAME}" == "" ]]; then
-		echo "STACK_NAME is required"
-		exit 1
-	fi
-}
