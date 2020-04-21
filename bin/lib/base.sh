@@ -12,11 +12,11 @@ cd ${PROJECT_DIR}
 # Default region.
 export AWS_REGION="eu-west-1"
 
-# Use precreated bucket for state.
+# Use pre-created bucket for state.
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
 STATE_BUCKET_NAME=pulumi-state-${AWS_ACCOUNT_ID}
 
-# USe precreated KMS key for secrets encryption.
+# Use pre-created KMS key for secrets encryption.
 SECRETS_PROVIDER="awskms://alias/pulumi-secrets?region=${AWS_REGION}"
 
 # Silence Pulumi with empty passphrase (actually using KMS).

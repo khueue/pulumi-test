@@ -7,7 +7,7 @@ Experimenting with Pulumi for managing AWS infrastructure.
 
 Requirements and gotchas:
 
--  POSIX.
+-  POSIX (make, bash).
 -  Docker.
 -  Assumes AWS credentials will be gotten from the environment
    (e.g. using https://github.com/otm/limes).
@@ -30,8 +30,8 @@ Then use the scripts in `bin` to manage Pulumi stacks, for example:
 ```
 bin/pulumi-ts
 bin/pulumi-ts projects/my-cool-project new
-bin/pulumi-ts projects/my-cool-project up prod
-bin/pulumi-ts projects/my-cool-project destroy prod
+bin/pulumi-ts projects/my-cool-project prod up
+bin/pulumi-ts projects/my-cool-project prod destroy
 ```
 
 
@@ -39,3 +39,4 @@ bin/pulumi-ts projects/my-cool-project destroy prod
 
 -  Restrict stacks to specific accounts? Currently, any stack can be
    provisioned in the current AWS account.
+-  Reuse same node_modules for all projects? Conflicts?

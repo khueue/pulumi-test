@@ -5,21 +5,38 @@ set -o pipefail
 # set -o nounset
 # set -o xtrace
 
-export PROJECT_DIR=$1
-export ACTION=$2
-export STACK_NAME=$3
+function usage_and_exit {
+	echo "Usage:"
+	echo "bin/pulumi-${RUNTIME} ${PROJECT_DIR} new"
+	echo "bin/pulumi-${RUNTIME} ${PROJECT_DIR} stage up"
+	echo "bin/pulumi-${RUNTIME} ${PROJECT_DIR} stage destroy"
+	echo "bin/pulumi-${RUNTIME} ${PROJECT_DIR} stage shell"
+	exit 1
+}
 
-if [[ "${PROJECT_DIR}" == "" || "${ACTION}" == "" ]]; then
+RUNTIME=ts
+
+PROJECT_DIR=$1
+STACK_NAME=$2
+ACTION=$3
+
+if [[ "${PROJECT_DIR}" == "" || "${STACK_NAME}" == "" ]]; then
 	if [[ "${PROJECT_DIR}" == "" ]]; then
 		PROJECT_DIR=projects/my-project
 	fi
-	echo "Usage:"
-	echo "bin/pulumi-ts ${PROJECT_DIR} new"
-	echo "bin/pulumi-ts ${PROJECT_DIR} up stage"
-	echo "bin/pulumi-ts ${PROJECT_DIR} destroy stage"
-	echo "bin/pulumi-ts ${PROJECT_DIR} shell stage"
-	exit 1
+	usage_and_exit
 fi
 
-echo "--- Running Pulumi (TypeScript) in Docker ..."
-make pulumi runner_script=./bin/lib/pulumi-ts.sh
+if [[ "$2" == "new" ]]; then
+	ACTION=$2
+	STACK_NAME=""
+elif [[ "${STACK_NAME}" == "" || "${ACTION}" == "" ]]; then
+	usage_and_exit
+fi
+
+export PROJECT_DIR
+export STACK_NAME
+export ACTION
+
+echo "--- Running Pulumi (${RUNTIME}) in Docker ..."
+make pulumi runner_script=./bin/lib/pulumi-${RUNTIME}.sh

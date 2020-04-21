@@ -17,7 +17,7 @@ function do_new {
 		--description="${PROJECT_NAME}"
 }
 
-function do_deps {
+function do_dependencies {
 	echo
 	echo "--- Installing dependencies ..."
 	npm install
@@ -28,7 +28,7 @@ if [[ "${ACTION}" == "new" ]]; then
 	base_do_stack_inits
 elif [[ "${ACTION}" == "up" ]]; then
 	base_require_stack_name
-	do_deps
+	do_dependencies
 	base_do_up
 elif [[ "${ACTION}" == "destroy" ]]; then
 	base_require_stack_name
