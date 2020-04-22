@@ -24,14 +24,12 @@ PROJECT_DIR=$1
 STACK_NAME=$2
 ACTION=$3
 
-if [[ "${PROJECT_DIR}" == "" ]]; then
-	usage_and_exit
-fi
-
 if [[ "$2" == "new" ]]; then
 	ACTION=$2
-	STACK_NAME=""
-elif [[ "${STACK_NAME}" == "" || "${ACTION}" == "" ]]; then
+	STACK_NAME="<unused>"
+fi
+
+if [[ "${PROJECT_DIR}" == "" || "${STACK_NAME}" == "" || "${ACTION}" == "" ]]; then
 	usage_and_exit
 fi
 

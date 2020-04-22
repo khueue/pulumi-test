@@ -34,6 +34,5 @@ elif [[ "${ACTION}" == "destroy" ]]; then
 elif [[ "${ACTION}" == "shell" ]]; then
 	base_do_shell
 else
-	echo "Unknown action: '${ACTION}'"
-	exit 1
+	base_error_unknown_action
 fi

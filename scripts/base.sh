@@ -76,7 +76,8 @@ function base_do_shell {
 	base_use_remote_state
 
 	echo
-	echo "--- Running shell for stack '${STACK_NAME}' ..."
+	echo "--- Starting shell for stack '${STACK_NAME}' ..."
+	echo "--- Placing you in the project folder, with direct access to pulumi."
 	bash
 }
 
@@ -85,4 +86,9 @@ function base_use_remote_state {
 	echo "--- Connecting to remote state ..."
 	pulumi login \
 		s3://${STATE_BUCKET_NAME}/${PROJECT_NAME}/${STACK_NAME}
+}
+
+function base_error_unknown_action {
+	echo "Unknown stack action: '${ACTION}'"
+	exit 1
 }
