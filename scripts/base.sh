@@ -14,7 +14,7 @@ export AWS_REGION="eu-west-1"
 
 # Use pre-created bucket for state.
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-STATE_BUCKET_NAME=pulumi-state-${AWS_ACCOUNT_ID}
+STATE_BUCKET_NAME="pulumi-state-${AWS_ACCOUNT_ID}"
 
 # Use pre-created KMS key for secrets encryption.
 SECRETS_PROVIDER="awskms://alias/pulumi-secrets?region=${AWS_REGION}"
