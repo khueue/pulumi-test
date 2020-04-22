@@ -9,8 +9,8 @@ set -o nounset
 mkdir -p ${PROJECT_DIR}
 cd ${PROJECT_DIR}
 
-# Default region.
-export AWS_REGION="eu-west-1"
+# Region for Pulumi housekeeping and default for new stack configs.
+export AWS_REGION=${MAIN_AWS_REGION}
 
 # Use pre-created bucket for state.
 AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
