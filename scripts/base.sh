@@ -33,8 +33,9 @@ declare -a DEFAULT_STACK_NAMES=(
 function base_do_stack_inits {
 	for STACK_NAME in "${DEFAULT_STACK_NAMES[@]}"; do
 		echo
-		echo "--- Creating config for ${STACK_NAME} ..."
+		echo "--- Creating config for '${STACK_NAME}' ..."
 
+		# No need for remote state when just scaffolding.
 		LOCAL_STATE_FILE=/tmp/${PROJECT_NAME}/${STACK_NAME}
 		mkdir -p ${LOCAL_STATE_FILE}
 		pulumi login \
@@ -42,10 +43,10 @@ function base_do_stack_inits {
 
 		pulumi stack init \
 			--secrets-provider="${SECRETS_PROVIDER}" \
-			--stack=${STACK_NAME}
+			--stack="${STACK_NAME}"
 
 		pulumi config \
-			--stack=${STACK_NAME} \
+			--stack="${STACK_NAME}" \
 			set aws:region ${AWS_REGION}
 	done
 }
@@ -66,7 +67,7 @@ function base_do_destroy {
 	base_use_remote_state
 
 	echo
-	echo "--- Destroying stack ..."
+	echo "--- Destroying stack '${STACK_NAME}' ..."
 	pulumi destroy \
 		--stack="${STACK_NAME}"
 }
@@ -75,7 +76,7 @@ function base_do_shell {
 	base_use_remote_state
 
 	echo
-	echo "--- Running shell ..."
+	echo "--- Running shell for stack '${STACK_NAME}' ..."
 	bash
 }
 
