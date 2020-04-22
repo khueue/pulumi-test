@@ -5,7 +5,7 @@ set -o pipefail
 set -o nounset
 # set -o xtrace
 
-source ./bin/lib/base.sh
+source ./scripts/base.sh
 
 function do_new {
 	echo
