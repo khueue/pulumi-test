@@ -1,4 +1,4 @@
-FROM pulumi/pulumi:v2.0.0
+FROM pulumi/pulumi:v2.1.0
 
 RUN \
 	wget https://dl.google.com/go/go1.14.2.linux-amd64.tar.gz \
